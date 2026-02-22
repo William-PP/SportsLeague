@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "r1E3/n0EDb8=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Janus\\Desktop\\SportsLeague\\SportsLeague.API\\SportsLeague.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Janus\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.3\\microsoft.aspnetcore.openapi.10.0.3.nupkg.sha512",
+    "C:\\Users\\Janus\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
