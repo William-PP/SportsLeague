@@ -18,7 +18,9 @@ public class Team :AuditBase
 Los tipo valor no pueden ser null a menos que se use ? siempre tienen un valor por defecto(01/01/0001 00:00:00)
 
 */
-
-
     public DateTime FoundedDate {get; set;}
+
+//Navigation Property - coleccion de jugadores
+
+    public ICollection<Player> Players {get; set;} = new List<Player>();
 }
