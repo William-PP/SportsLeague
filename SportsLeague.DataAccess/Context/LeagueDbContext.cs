@@ -15,12 +15,15 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
 
     public DbSet<Team> teams => Set<Team>();
     //Esto representa la tabla teams es Tabla:teams tipo Team
+    public DbSet<Player> Players => Set<Player>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         //Metodo para configurar la base de datos: se define aca claves, indices, tamaños, restricciones
     {
         base.OnModelCreating(modelBuilder); //llama a la implementacion base del framework 
+        //Team Configuration
         modelBuilder.Entity<Team>(entity =>// aca se configurar la entidad team
         {
+
             entity.HasKey(t => t.Id);//clave primaria
             entity.Property(t => t.Name)//configura name
             .IsRequired() // not null (no puede ser null)
@@ -39,5 +42,36 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             entity.HasIndex(t =>t.Name) //indice unico para name
             .IsUnique(); // no permite mas con este nombre en la base de datos
         });
+
+        //Player configuration
+        modelBuilder.Entity<Player>(entity =>
+        {
+            entity.HasKey(p => p.Id); 
+            entity.Property(p => p.FirstName)
+            .IsRequired()
+            .HasMaxLength(80);
+            entity.Property(p => p.LastName)
+            .IsRequired()
+            .HasMaxLength(80);
+            entity.Property(p => p.BirthDate)
+            .IsRequired();
+            entity.Property(p => p.Number)
+            .IsRequired(); 
+            entity.Property(p => p.Position)
+            .IsRequired(); 
+            entity.Property(p => p.CreatedAt)
+            .IsRequired();
+            entity.Property(p => p.UpdateAt)
+            .IsRequired(false);
+            // Relación 1:N con Team
+            entity.HasOne(p => p.Team) 
+            .WithMany(t => t.Players)
+            .HasForeignKey(p => p.TeamId)
+            .OnDelete(DeleteBehavior.Cascade); 
+
+            // Índice único compuesto: número de camiseta único por equipo
+            entity.HasIndex(p => new { p.TeamId, p.Number }) 
+            .IsUnique();
+        });
+        }
     }
-}
