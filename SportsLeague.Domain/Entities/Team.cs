@@ -23,4 +23,8 @@ Los tipo valor no pueden ser null a menos que se use ? siempre tienen un valor p
 //Navigation Property - coleccion de jugadores
 
     public ICollection<Player> Players {get; set;} = new List<Player>();
+
+    // Navigation Property- tournament team
+    public ICollection<TournamentTeam> TournamentTeams { get; set; } = new 
+        List<TournamentTeam>();
 }

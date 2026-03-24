@@ -12,10 +12,19 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
          *base(options) pasa la configuracion al padre sin esto no funciona practicamente nada*/
     {
     }
-
-    public DbSet<Team> teams => Set<Team>();
     //Esto representa la tabla teams es Tabla:teams tipo Team
+    public DbSet<Team> teams => Set<Team>();
+    //Esto representa la tabla teams es Tabla:player
     public DbSet<Player> Players => Set<Player>();
+    //Esto representa la tabla teams es Tabla:referee
+    public DbSet<Referee> Referees => Set<Referee>();
+
+    //Esto representa la tabla teams es Tabla:tournament
+    public DbSet<Tournament> Tournaments => Set<Tournament>();
+
+    //Esto representa la tabla teams es Tabla:tournamentteam
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         //Metodo para configurar la base de datos: se define aca claves, indices, tamaños, restricciones
     {
@@ -75,5 +84,89 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             entity.HasIndex(p => new { p.TeamId, p.Number }) 
             .IsUnique();
         });
-        }
+
+        // ── Referee Configuration ──
+        modelBuilder.Entity<Referee>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+
+            entity.Property(r => r.FirstName)
+                .IsRequired()
+                .HasMaxLength(80);
+
+            entity.Property(r => r.LastName)
+                .IsRequired()
+                .HasMaxLength(80);
+
+            entity.Property(r => r.Nationality)
+                .IsRequired()
+                .HasMaxLength(80);
+
+            entity.Property(r => r.CreatedAt)
+                .IsRequired();
+
+            entity.Property(r => r.UpdateAt)
+                .IsRequired(false);
+        });
+
+        // ── Tournament Configuration ──
+        modelBuilder.Entity<Tournament>(entity =>
+        {
+            entity.HasKey(t => t.Id);
+
+            entity.Property(t => t.Name)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(t => t.Season)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.Property(t => t.StartDate)
+                .IsRequired();
+
+            entity.Property(t => t.EndDate)
+                .IsRequired();
+
+            entity.Property(t => t.Status)
+                .IsRequired();
+
+            entity.Property(t => t.CreatedAt)
+                .IsRequired();
+
+            entity.Property(t => t.UpdateAt)
+                .IsRequired(false);
+        });
+
+        // ── TournamentTeam Configuration ──
+        modelBuilder.Entity<TournamentTeam>(entity =>
+        {
+            entity.HasKey(tt => tt.Id);
+
+            entity.Property(tt => tt.RegisteredAt)
+                .IsRequired();
+
+            entity.Property(tt => tt.CreatedAt)
+                .IsRequired();
+
+            entity.Property(tt => tt.UpdateAt)
+                .IsRequired(false);
+
+            // Relación con Tournament
+            entity.HasOne(tt => tt.Tournament)
+                .WithMany(t => t.TournamentTeams)
+                .HasForeignKey(tt => tt.TournamentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación con Team
+            entity.HasOne(tt => tt.Team)
+                .WithMany(t => t.TournamentTeams)
+                .HasForeignKey(tt => tt.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Índice único compuesto: un equipo solo una vez por torneo
+            entity.HasIndex(tt => new { tt.TournamentId, tt.TeamId })
+                .IsUnique();
+        });
+    }
     }
