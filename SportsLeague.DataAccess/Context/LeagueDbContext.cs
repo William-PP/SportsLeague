@@ -63,7 +63,9 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             .IsRequired();
             entity.Property(p => p.UpdateAt)
             .IsRequired(false);
+
             // Relación 1:N con Team
+
             entity.HasOne(p => p.Team) 
             .WithMany(t => t.Players)
             .HasForeignKey(p => p.TeamId)
