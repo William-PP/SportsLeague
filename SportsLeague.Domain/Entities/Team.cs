@@ -15,8 +15,7 @@ public class Team :AuditBase
     public string? LogoUrl {get; set;}
 
 /*FoundedDate es un tipo valor 
-Los tipo valor no pueden ser null a menos que se use ? siempre tienen un valor por defecto(01/01/0001 00:00:00)
-
+Los tipo valor no pueden ser null a menos que se use ? siempre tienen un valor por defecto(01/01/0001 00:00:00
 */
     public DateTime FoundedDate {get; set;}
 

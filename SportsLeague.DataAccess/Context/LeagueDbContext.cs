@@ -14,16 +14,26 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
     }
     //Esto representa la tabla teams es Tabla:teams tipo Team
     public DbSet<Team> teams => Set<Team>();
-    //Esto representa la tabla teams es Tabla:player
+    //Esto representa la tabla player es Tabla:player
     public DbSet<Player> Players => Set<Player>();
-    //Esto representa la tabla teams es Tabla:referee
+    //Esto representa la tabla referees es Tabla:referee
     public DbSet<Referee> Referees => Set<Referee>();
 
-    //Esto representa la tabla teams es Tabla:tournament
+    //Esto representa la tabla Tournaments es Tabla:tournament
     public DbSet<Tournament> Tournaments => Set<Tournament>();
 
-    //Esto representa la tabla teams es Tabla:tournamentteam
+    //Esto representa la tabla Tournamentteams es Tabla:tournamentteam
 
+    public DbSet<TournamentTeam> TournamentTeams => Set<TournamentTeam>();
+
+    //Esto representa la tabla Sponsors es Tabla:Sponsors
+    
+    public DbSet<Sponsor> Sponsors => Set<Sponsor>();
+
+
+    //Esto representa la tabla TournamentSponsors es Tabla:TournamentSponsor
+
+    public DbSet<TournamentSponsor> TournamentSponsors => Set<TournamentSponsor>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         //Metodo para configurar la base de datos: se define aca claves, indices, tamaños, restricciones
@@ -168,5 +178,7 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             entity.HasIndex(tt => new { tt.TournamentId, tt.TeamId })
                 .IsUnique();
         });
+
+
     }
     }

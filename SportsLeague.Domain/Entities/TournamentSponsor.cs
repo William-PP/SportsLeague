@@ -9,7 +9,6 @@ public class TournamentSponsor: AuditBase
         public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
 
         //navegation properties
-
         public Tournament Tournament { get; set; } = null!;
         public Sponsor Sponsor { get; set; } = null!;
 
