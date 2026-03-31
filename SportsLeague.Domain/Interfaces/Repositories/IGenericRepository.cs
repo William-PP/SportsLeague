@@ -10,7 +10,7 @@ public interface IGenericRepository<T> where T : AuditBase //<T> t es generico f
     //la interface obliga a implementar los metodos a quien la use
 {
 
-    //Todo esto e sprogramacion asincrona
+    //esto es programacion asincrona
     //task representa una operacio que se ejecuta de manera asincrona(significa que la operacion puede tardar)
     //esto es a fin de que no se ejecuten muchas cosas y se bloquee el programa
     //por eso se usa Async

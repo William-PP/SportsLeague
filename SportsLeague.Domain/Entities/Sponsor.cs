@@ -11,7 +11,7 @@ public class Sponsor : AuditBase
     public SponsorCategory Category { get; set; }
 
     //Navigation Properties
-    public ICollection<TournamentSponsor> TournamentSponsor { get; set; } = new
+    public ICollection<TournamentSponsor> TournamentSponsors { get; set; } = new
        List<TournamentSponsor>();
 
 }
