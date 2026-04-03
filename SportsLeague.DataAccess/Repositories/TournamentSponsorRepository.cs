@@ -23,6 +23,7 @@ public class TournamentSponsorRepository : GenericRepository<TournamentSponsor>,
     {
         return await _dbSet
             .Include(ts => ts.Tournament)
+            .Include(ts => ts.Sponsor)
             .Where(ts => ts.SponsorId == sponsorId)
             .ToListAsync();
     }
