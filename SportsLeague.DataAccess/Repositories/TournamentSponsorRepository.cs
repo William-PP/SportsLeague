@@ -27,7 +27,7 @@ public class TournamentSponsorRepository : GenericRepository<TournamentSponsor>,
             .ToListAsync();
     }
 
-    public async Task<TournamentSponsor?> GetByTournamentAndTeamAsync(int tournamentId, int sponsorId)
+    public async Task<TournamentSponsor?> GetByTournamentAndSponsorAsync(int tournamentId, int sponsorId)
     {
         return await _dbSet
             .Where(ts => ts.TournamentId == tournamentId && ts.SponsorId == sponsorId)

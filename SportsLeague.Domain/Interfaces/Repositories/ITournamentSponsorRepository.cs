@@ -10,5 +10,5 @@ public interface ITournamentSponsorRepository : IGenericRepository<TournamentSpo
     Task<IEnumerable<TournamentSponsor>> GetBySponsorIdAsync(int sponsorId);
 
     //Metodo para evitar relaciones repetidas
-    Task<TournamentSponsor?> GetByTournamentAndTeamAsync(int tournamentId, int sponsorId);
+    Task<TournamentSponsor?> GetByTournamentAndSponsorAsync(int tournamentId, int sponsorId);
 }

@@ -8,12 +8,19 @@ namespace SportsLeague.Domain.Services;
 public class SponsorService : ISponsorService
 {
     private readonly ISponsorRepository _SponsorRepository;
+    private readonly ITournamentSponsorRepository _TournamentSponsorRepository;
+    private readonly ITournamentRepository _TournamentRepository;
     private readonly ILogger<SponsorService> _logger;
 
-    public SponsorService(ISponsorRepository sponsorRepository, ILogger<SponsorService> logger)
+    public SponsorService(ISponsorRepository sponsorRepository, 
+        ITournamentSponsorRepository tournamentSponsorRepository,
+        ITournamentRepository tournamentRepository,
+        ILogger<SponsorService> logger)
     {
 
         _SponsorRepository = sponsorRepository;
+        _TournamentSponsorRepository = tournamentSponsorRepository;
+        _TournamentRepository = tournamentRepository;
         _logger = logger;
 
     }
@@ -79,6 +86,73 @@ public class SponsorService : ISponsorService
 
         _logger.LogInformation("Deleting Sponsor with ID: {SponsorId}", id);
         await _SponsorRepository.DeleteAsync(id);
+    }
+    public async Task AssociateToTournamentAsync(TournamentSponsor tournamentSponsor)
+    {
+
+        // Valicacion de contract amount mayor a 0
+        if (tournamentSponsor.ContractAmount <= 0)
+        {
+            throw new InvalidOperationException("El monto del contrato debe ser mayor a 0");
+        }
+
+        // validacion para saber si el torneo existe
+        var tournament = await _TournamentRepository.GetByIdAsync(tournamentSponsor.TournamentId);
+        if (tournament == null)
+            throw new KeyNotFoundException($"No se encontró el torneo con ID {tournamentSponsor.TournamentId}");
+
+        // validacion para saber si el sponsor existe
+        var sponsorExists = await _SponsorRepository.ExistsAsync(tournamentSponsor.SponsorId);
+        if (!sponsorExists)
+            throw new KeyNotFoundException($"No se encontró el patrocinador con ID {tournamentSponsor.SponsorId}");
+
+        // validacion para evitar relaciones duplicadas
+        var existingLink = await _TournamentSponsorRepository.GetByTournamentAndSponsorAsync(
+         tournamentSponsor.TournamentId,
+         tournamentSponsor.SponsorId);
+
+        if (existingLink != null)
+        {
+            throw new InvalidOperationException("No se puede duplicar la vinculación (este patrocinador ya está inscrito en este torneo).");
+        }
+
+        _logger.LogInformation("Associating sponsor {SponsorId} to tournament {TournamentId}",
+            tournamentSponsor.SponsorId, tournamentSponsor.TournamentId);
+
+        await _TournamentSponsorRepository.CreateAsync(tournamentSponsor);
+    }
+
+    public async Task DissociateFromTournamentAsync(int tournamentId, int sponsorId)
+    {
+        _logger.LogInformation(
+            "Attempting to dissociate Sponsor {SponsorId} from Tournament {TournamentId}",
+            sponsorId, tournamentId);
+
+        // validacion para saber saber si existe la relacion
+        var existingLink = await _TournamentSponsorRepository
+            .GetByTournamentAndSponsorAsync(tournamentId, sponsorId);
+        if (existingLink == null)
+        {
+            _logger.LogWarning(
+                "Dissociation failed: No relationship found between Sponsor {SponsorId} and Tournament {TournamentId}",
+                sponsorId, tournamentId);
+
+            throw new KeyNotFoundException("No se encontró una vinculación activa entre este patrocinador y el torneo especificado.");
+        }
+
+        await _TournamentSponsorRepository.DeleteAsync(existingLink.Id);
+
+        _logger.LogInformation(
+            "Successfully dissociated Sponsor {SponsorId} from Tournament {TournamentId}",
+            sponsorId, tournamentId);
+    }
+
+    public async Task<IEnumerable<TournamentSponsor>> GetSponsorTournamentsAsync(int sponsorId)
+    {
+        _logger.LogInformation("Consultando torneos vinculados al patrocinador {SponsorId}", sponsorId);
+
+        // Usamos el método que ya creamos en tu Repository
+        return await _TournamentSponsorRepository.GetBySponsorIdAsync(sponsorId);
     }
 
 }

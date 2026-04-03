@@ -83,4 +83,54 @@ public class SponsorController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    [HttpPost("{id}/tournaments")]
+    public async Task<ActionResult> AssociateToTournament(int id, TournamentSponsorRequestDTO dto)
+    {
+        try
+        {
+            // Forzamos que el SponsorId del DTO coincida con el ID de la URL
+            dto.SponsorId = id;
+
+            var tournamentSponsor = _mapper.Map<TournamentSponsor>(dto);
+            await _sponsorService.AssociateToTournamentAsync(tournamentSponsor);
+
+            return Ok(new { message = "Patrocinador vinculado exitosamente al torneo." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+
+    [HttpGet("{id}/tournaments")]
+    public async Task<ActionResult<IEnumerable<TournamentSponsorResponseDTO>>> GetSponsorTournaments(int id)
+    {
+        var associations = await _sponsorService.GetSponsorTournamentsAsync(id);
+
+        // El Mapper usará la configuración de MappingProfile para traer el TournamentName
+        var response = _mapper.Map<IEnumerable<TournamentSponsorResponseDTO>>(associations);
+
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}/tournaments/{tournamentId}")]
+    public async Task<ActionResult> DissociateFromTournament(int id, int tournamentId)
+    {
+        try
+        {
+            await _sponsorService.DissociateFromTournamentAsync(tournamentId, id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
 }

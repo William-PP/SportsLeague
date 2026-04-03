@@ -9,5 +9,12 @@ public interface ISponsorService
     Task UpdateAsync(int id, Sponsor sponsor);
     Task DeleteAsync(int id);
 
-    
+    //Metodo para vincular sponsors con torneos
+    Task AssociateToTournamentAsync(TournamentSponsor tournamentSponsor);
+
+    //Metodo para desvincular sponsors de torneos
+    Task DissociateFromTournamentAsync(int tournamentId, int sponsorId);
+
+    //Metodo para listar los torneos de un sponsor
+    Task<IEnumerable<TournamentSponsor>> GetSponsorTournamentsAsync(int sponsorId);
 }
