@@ -207,6 +207,7 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             entity.HasKey(ts => ts.Id);
 
             entity.Property(ts => ts.ContractAmount)
+                .HasPrecision(18,2)
                 .IsRequired();
 
             entity.Property(ts => ts.JoinedAt)
