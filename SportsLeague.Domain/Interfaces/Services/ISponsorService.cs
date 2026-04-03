@@ -8,4 +8,6 @@ public interface ISponsorService
     Task<Sponsor> CreateAsync(Sponsor sponsor);
     Task UpdateAsync(int id, Sponsor sponsor);
     Task DeleteAsync(int id);
+
+    
 }
