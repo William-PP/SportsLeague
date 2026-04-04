@@ -71,8 +71,12 @@ public class SponsorService : ISponsorService
             throw new KeyNotFoundException($"No se encontró el Sponsor con ID {id}");
 
         existing.Name = sponsor.Name;
-        
-        
+        existing.ContactEmail = sponsor.ContactEmail;
+        existing.Phone = sponsor.Phone;
+        existing.WebsiteUrl = sponsor.WebsiteUrl;
+        existing.Category = sponsor.Category;
+
+
 
         _logger.LogInformation("Updating Sponsor with ID: {SponsorId}", id);
         await _SponsorRepository.UpdateAsync(existing);

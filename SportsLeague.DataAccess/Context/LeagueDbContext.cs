@@ -186,10 +186,10 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             entity.Property(s => s.Name)//configura name
             .IsRequired() // not null (no puede ser null)
             .HasMaxLength(100); // varchar(100)
-            entity.Property(s => s.ContactEmail) // configura city
+            entity.Property(s => s.ContactEmail) 
             .IsRequired()//not null
             .HasMaxLength(100);//varchar (100)
-            entity.Property(s => s.Phone)// configura estadio
+            entity.Property(s => s.Phone)
             .HasMaxLength(150);//varchar (150)
             entity.Property(s => s.WebsiteUrl)//configura url
             .HasMaxLength(500);//varchar 500
@@ -225,7 +225,7 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
                 .HasForeignKey(ts => ts.SponsorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Índice único compuesto: un equipo solo una vez por torneo
+            // Índice único compuesto
             entity.HasIndex(ts => new { ts.TournamentId, ts.SponsorId })
                 .IsUnique();
         });
