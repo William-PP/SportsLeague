@@ -13,4 +13,8 @@ public class Tournament : AuditBase
 
     public ICollection<TournamentSponsor> TournamentSponsors { get; set; } = new
        List<TournamentSponsor>();
+
+    public ICollection<Match> Matches { get; set; } = new List<Match>();
+
+
 }
