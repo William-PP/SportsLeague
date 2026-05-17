@@ -47,6 +47,9 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
 
     //Esto representa la tabla Cards es tabla: Card
     public DbSet<Card> Cards => Set<Card>();
+
+    //Esto representa la tabla MatchLineups es tabla: MatchLineup
+    public DbSet<MatchLineup> MatchLineups => Set<MatchLineup>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         //Metodo para configurar la base de datos: se define aca claves, indices, tamaños, restricciones
     {
@@ -341,6 +344,42 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             .WithMany(p => p.Cards) 
             .HasForeignKey(c => c.PlayerId) 
             .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // ── MatchLineup Configuration ──
+        modelBuilder.Entity<MatchLineup>(entity =>
+        {
+            entity.HasKey(ml => ml.Id);
+
+            entity.Property(ml => ml.IsStarter)
+                .IsRequired();
+
+            entity.Property(ml => ml.Position)
+                .IsRequired()
+                .HasConversion<string>()
+                .HasMaxLength(10);
+
+            entity.Property(ml => ml.CreatedAt)
+                .IsRequired();
+
+            entity.Property(ml => ml.UpdateAt)
+                .IsRequired(false);
+
+            // Relación con Match
+            entity.HasOne(ml => ml.Match)
+                .WithMany(m => m.Lineups)
+                .HasForeignKey(ml => ml.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación con Player
+            entity.HasOne(ml => ml.Player)
+                .WithMany(p => p.Lineups)
+                .HasForeignKey(ml => ml.PlayerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Índice único compuesto: un jugador solo una vez por partido
+            entity.HasIndex(ml => new { ml.MatchId, ml.PlayerId })
+                .IsUnique();
         });
     }
 }
