@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using SportsLeague.API.DTOs.Request;
 using SportsLeague.API.DTOs.Response;
@@ -25,6 +26,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult<AuthResponseDTO>> Register(RegisterRequestDTO request)
     {
         var user = new User
@@ -55,6 +57,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult<AuthResponseDTO>> Login(AuthRequestDTO request)
     {
         var isValid = await _userService.ValidatePasswordAsync(request.Email, request.Password);

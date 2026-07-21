@@ -1,14 +1,15 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using SportsLeague.DataAccess.Context;
 using SportsLeague.DataAccess.Repositories;
+using SportsLeague.DataAccess.Seeders;
 using SportsLeague.Domain.Helpers;
 using SportsLeague.Domain.Interfaces.Repositories;
 using SportsLeague.Domain.Interfaces.Services;
 using SportsLeague.Domain.Services;
-using SportsLeague.DataAccess.Seeders;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,6 +101,26 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// ──  Rate Limiting ──
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // Política general: 100 requests por minuto por IP
+    options.AddFixedWindowLimiter("general", opts =>
+    {
+        opts.PermitLimit = 100;
+        opts.Window = TimeSpan.FromMinutes(1);
+    });
+
+    // Política para auth: 5 intentos por minuto
+    options.AddFixedWindowLimiter("auth", opts =>
+    {
+        opts.PermitLimit = 5;
+        opts.Window = TimeSpan.FromMinutes(1);
+    });
+});
+
 var app = builder.Build();
 
 // ── Data Seeder ──
@@ -122,6 +143,7 @@ app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
