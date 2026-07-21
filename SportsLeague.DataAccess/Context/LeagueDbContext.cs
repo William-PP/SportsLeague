@@ -50,6 +50,10 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
 
     //Esto representa la tabla MatchLineups es tabla: MatchLineup
     public DbSet<MatchLineup> MatchLineups => Set<MatchLineup>();
+
+    ////Esto representa el usuario
+    public DbSet<User> Users => Set<User>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         //Metodo para configurar la base de datos: se define aca claves, indices, tamaños, restricciones
     {
@@ -381,5 +385,42 @@ public class LeagueDbContext : DbContext /*clase principal de entity framework c
             entity.HasIndex(ml => new { ml.MatchId, ml.PlayerId })
                 .IsUnique();
         });
+
+        // ── User Configuration ──
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(u => u.Id);
+
+            entity.Property(u => u.FirstName)
+                .IsRequired()
+                .HasMaxLength(80);
+
+            entity.Property(u => u.LastName)
+                .IsRequired()
+                .HasMaxLength(80);
+
+            entity.Property(u => u.Email)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(u => u.PasswordHash)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(u => u.Role)
+                .IsRequired();
+
+            entity.Property(u => u.CreatedAt)
+                .IsRequired();
+
+            entity.Property(u => u.UpdateAt)
+                .IsRequired(false);
+
+            // Email único — no se puede registrar dos veces con el mismo email
+            entity.HasIndex(u => u.Email)
+                .IsUnique();
+        });
+
     }
+
 }
