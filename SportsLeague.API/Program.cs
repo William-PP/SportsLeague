@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using SportsLeague.DataAccess.Context;
 using SportsLeague.DataAccess.Repositories;
 using SportsLeague.Domain.Helpers;
@@ -30,6 +33,7 @@ builder.Services.AddScoped<IMatchResultRepository, MatchResultRepository>();
 builder.Services.AddScoped<IGoalRepository, GoalRepository>(); 
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IMatchLineupRepository, MatchLineupRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 
@@ -44,6 +48,7 @@ builder.Services.AddScoped<IMatchEventService, MatchEventService>();
 builder.Services.AddScoped<IMatchLineupService, MatchLineupService>();
 builder.Services.AddScoped<MatchValidationHelper>();
 builder.Services.AddScoped<IStandingsService, StandingsService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 // ── AutoMapper ──
@@ -56,6 +61,29 @@ builder.Services.AddControllers();
 // ── Swagger ──
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
+
+// ── JWT Authentication ──
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -78,6 +106,7 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportsLeague.API.DTOs.Request;
 using SportsLeague.API.DTOs.Response;
@@ -9,6 +10,7 @@ namespace SportsLeague.API.Controlles;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 
 public class TeamController : ControllerBase
 {

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportsLeague.API.DTOs.Request;
 using SportsLeague.API.DTOs.Response;
@@ -9,6 +10,7 @@ namespace SportsLeague.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SponsorController : ControllerBase
 {
     private readonly ISponsorService _sponsorService;
