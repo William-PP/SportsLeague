@@ -9,10 +9,11 @@ public static class DataSeeder
 {
     public static async Task SeedAsync(LeagueDbContext context)
     {
-        // Solo ejecutar si no hay equipos (BD vacía)
-        if (await context.teams.AnyAsync()) return;
-
         // ═══ 1. EQUIPOS (Liga BetPlay 2026) ═══
+        var hasTeams = await context.teams.AnyAsync();
+
+        if (!hasTeams)
+        {
         var teams = new List<Team>
         {
             new() { Name = "Atlético Nacional", City = "Medellín", Stadium = "Atanasio Girardot" },
@@ -241,5 +242,22 @@ public static class DataSeeder
         }
 
         await context.SaveChangesAsync();
+        } // fin if (!hasTeams)
+
+        // ═══ 6. USUARIO ADMIN (siempre verificar) ═══
+        if (!await context.Users.AnyAsync())
+        {
+            var adminUser = new User
+            {
+                FirstName = "Admin",
+                LastName = "SportsLeague",
+                Email = "admin@sportsleague.com",
+                Role = UserRole.Admin,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!")
+            };
+
+            context.Users.Add(adminUser);
+            await context.SaveChangesAsync();
+        }
     }
 }
