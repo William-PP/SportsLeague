@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Obsidian vault (documentación personal)
 .vault/
+
+# opencode skills (configuración personal del asistente)
+.opencode/
