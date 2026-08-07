@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +59,10 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // ── Controllers ──
 builder.Services.AddControllers();
+
+// ── FluentValidation ──
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // ── Swagger ──
 builder.Services.AddEndpointsApiExplorer(); 
